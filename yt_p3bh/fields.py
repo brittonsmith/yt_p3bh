@@ -13,6 +13,9 @@ field stuff
 # The full license is in the file COPYING.txt, distributed with this software.
 #-----------------------------------------------------------------------------
 
+import numpy as np
+from yt.utilities.physical_constants import G
+
 def _mdot_bh_norm(field, data):
     val = data["density"].astype(np.float64) / \
           data["sound_speed"].astype(np.float64)**3
