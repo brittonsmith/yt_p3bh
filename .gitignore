@@ -1,4 +1,5 @@
 __pycache__/
+build
 yt_p3bh.egg-info
 syntax: glob
 *~
