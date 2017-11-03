@@ -1,0 +1,5 @@
+__pycache__/
+yt_p3bh.egg-info
+syntax: glob
+*~
+*.pyc
