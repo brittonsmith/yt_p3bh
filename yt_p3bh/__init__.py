@@ -25,14 +25,14 @@ from yt_p3bh.fields import \
     _mdot_bh_norm, \
     _bh_to_edd_norm
 
-yt.add_field("bondi_hoyle_accretion_rate",
-             function=_mdot_bh_norm,
-             units="1/(Msun*yr)",
-             sampling_type="cell")
-yt.add_field("BH_to_Eddington",
-             function=_bh_to_edd_norm,
-             units="1/Msun",
-             sampling_type="cell")
+add_field("bondi_hoyle_accretion_rate",
+          function=_mdot_bh_norm,
+          units="1/(Msun*yr)",
+          sampling_type="cell")
+add_field("BH_to_Eddington",
+          function=_bh_to_edd_norm,
+          units="1/Msun",
+          sampling_type="cell")
 
 from yt_p3bh.particles import \
      _pop3_black_hole
