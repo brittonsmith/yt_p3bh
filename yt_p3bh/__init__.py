@@ -17,7 +17,8 @@ from yt_p3bh.pop_iii import \
     get_remnant_mass, \
     get_MS_lifetime
 
-import yt_p3bh.fields
+from yt_p3bh.fields import \
+    add_fields
 
 from yt_p3bh.particles import \
     add_particle_filters
