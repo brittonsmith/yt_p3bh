@@ -13,8 +13,12 @@ particle stuff
 # The full license is in the file COPYING.txt, distributed with this software.
 #-----------------------------------------------------------------------------
 
+from yt.data_objects.particle_filters import \
+    add_particle_filter
+from yt.utilities.logger import ytLogger as mylog
+
 from yt_p3bh.pop_iii import \
-    get_MW_lifetime
+    get_MS_lifetime
 
 def _pop3_black_hole(pfilter, data):
     ct = data["creation_time"]
@@ -44,3 +48,14 @@ def _pop3_black_hole(pfilter, data):
     age = (data.ds.current_time - ct[stars]).to(t_ms.units)
     stars[stars] &= (age > t_ms)
     return stars
+
+add_particle_filter(
+    "black_hole", function=_pop3_black_hole, filtered_type="all",
+    requires=["creation_time", "metallicity_fraction",
+              "particle_type", "particle_mass"])
+
+def add_particle_filters(ds):
+    pfilters = ["black_hole"]
+    for pfilter in pfilters:
+        if not ds.add_particle_filter(pfilter):
+            mylog.warn("Failed to add filter: %s." % pfilter)
