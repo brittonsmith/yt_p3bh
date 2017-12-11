@@ -13,6 +13,9 @@ Pop III black hole analysis functions.
 # The full license is in the file COPYING.txt, distributed with this software.
 #-----------------------------------------------------------------------------
 
+from yt_p3bh.bondi_hoyle import \
+    bondi_hoyle_accretion_rate
+
 from yt_p3bh.pop_iii import \
     get_remnant_mass, \
     get_MS_lifetime
