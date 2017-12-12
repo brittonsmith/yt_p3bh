@@ -14,6 +14,8 @@ if __name__ == "__main__":
     data = defaultdict(list)
     
     for field in ds.field_list:
+        if field[0] == "all":
+            continue
         if "mass" not in field[1]:
             continue
 
