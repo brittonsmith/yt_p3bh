@@ -19,6 +19,12 @@ from yt.extensions.astro_analysis.halo_analysis.api import *
 
 from yt.extensions.p3bh import *
 
+def bh_to_eddington(halo):
+    sp = halo.data_object
+    fex = sp.quantities.extrema(("gas", "BH_to_Eddington"))
+    return fex[1]
+add_quantity("BH_to_Eddington", bh_to_eddington)
+
 def count_black_holes(halo):
     dds = halo.halo_catalog.data_ds
     hds = halo.halo_catalog.halos_ds
@@ -72,6 +78,7 @@ if __name__ == "__main__":
             dds = fn
 
         add_particle_filters(dds)
+        add_fields(dds)
         hds = yt.load("rockstar_halos/halos_%s.0.bin" % dds.directory)
 
         ad = hds.all_data()
@@ -82,6 +89,7 @@ if __name__ == "__main__":
                          output_dir=os.path.join(data_dir, dds.directory))
         hc.add_callback("sphere")
         hc.add_quantity("n_black_holes")
+        hc.add_quantity("BH_to_Eddington")
         if not time_series or fn == fns[-1]:
             hc.add_callback("black_hole_stats", bhds)
         hc.create()
