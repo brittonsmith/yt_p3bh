@@ -6,6 +6,7 @@ full growth histories.
 Usage: python black_hole_growth_stats.py
 """
 from collections import defaultdict
+import numpy as np
 import yt
 
 if __name__ == "__main__":
@@ -23,9 +24,15 @@ if __name__ == "__main__":
         data["particle_index"].append(bhid)
         mfield = ds.data[("star", "p_%d_mass" % bhid)]
         gfield = ds.data[("star", "p_%d_mdot" % bhid)]
+        tfield = ds.data[("star", "p_%d_time" % bhid)]
         data["relative_growth"].append(mfield[-1] / mfield[0])
         data["absolute_growth"].append(mfield[-1] - mfield[0])
         data["max_growth_rate"].append(gfield.max())
+        if mfield[-1] - mfield[0] <= 0:
+            mirg = 0.
+        else:
+            mirg = np.diff(mfield).max() / (mfield[-1] - mfield[0])
+        data["max_instantaneous_relative_growth"].append(mirg)
 
     for field in data:
         data[field] = ds.arr(data[field])
