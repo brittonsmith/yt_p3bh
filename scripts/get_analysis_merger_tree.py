@@ -5,11 +5,12 @@ and the max value of the BH_to_Eddington field in each halo.  These have been
 calculated by the black_hole_halo_catalog.py script, but can also be gotten
 from the simulation datasets by setting from_halo_catalogs to False.
 
-Usage: python get_analysis_merger_tree.py
+Usage: python get_analysis_merger_tree.py <simulation filename>
 """
 
 import numpy as np
 import os
+import sys
 import yt
 import ytree
 
@@ -28,7 +29,7 @@ from yt.extensions.p3bh.merger_tree_analysis import \
 
 def get_my_tree():
     """
-    Get whatever tree we want to work with.
+    Halo with the most black holes from the normal region.
     """
 
     ### Get the tree with the most black holes.
@@ -47,18 +48,46 @@ def get_my_tree():
     fn = t.save_tree(filename=os.path.join(data_dir, "tree_%d" % uid))
     return fn
 
+def get_my_tree_rare():
+    """
+    Halo with the most black holes from the normal region.
+    """
+
+    ### Get the tree with the most black holes.
+    ds = yt.load("halo_catalogs_nosub/RD0041/RD0041.0.h5")
+    a = ytree.load("rockstar_halos/trees/tree_0_0_0.dat")
+
+    # halo with highest relative growth
+    gsort = ds.r["relative_growth_max"].argsort()[::-1]
+    hid = ds.r["particle_identifier"][gsort][0].d
+
+    # # halo with second highest relative growth
+    # gsort = ds.r["relative_growth_max"].argsort()[::-1]
+    # hid = ds.r["particle_identifier"][gsort][1].d
+
+    t = a[a["Orig_halo_ID"] == hid][0]
+    uid = t["uid"]
+
+    data_dir = "halo_%d" % uid
+    ensure_dir(data_dir)
+
+    fn = t.save_tree(filename=os.path.join(data_dir, "tree_%d" % uid))
+    return fn
+
 if __name__ == "__main__":
-    # Get the target tree here.
-    a_fn = "halo_2170858/tree_2170858/tree_2170858.h5"
-    if not os.path.exists(a_fn):
-        get_my_tree()
+    ### Get the target tree here.
+    # a_fn = "halo_2170858/tree_2170858/tree_2170858.h5"
+    # if not os.path.exists(a_fn):
+    #     get_my_tree()
+    a_fn = get_my_tree_rare()
+
     a = ytree.load(a_fn)
 
     uid = a["uid"]
     data_dir = "halo_%d" % uid
     ensure_dir(data_dir)
     
-    es = yt.load("rs_normal_bg1.h5")
+    es = yt.load(sys.argv[1])
     exi, fns = get_existing_datasets(es, "%s")
 
     last_snap_idx = int(a[0]["Snap_idx"])
