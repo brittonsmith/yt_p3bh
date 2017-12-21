@@ -28,6 +28,8 @@ if __name__ == "__main__":
         data["relative_growth"].append(mfield[-1] / mfield[0])
         data["absolute_growth"].append(mfield[-1] - mfield[0])
         data["max_growth_rate"].append(gfield.max())
+        data["max_growth_rate_eddington"].append(gfield.max() / mfield[gfield.argmax()])
+        data["growth_time"].append(tfield[-1] - tfield[0])
         if mfield[-1] - mfield[0] <= 0:
             mirg = 0.
         else:
