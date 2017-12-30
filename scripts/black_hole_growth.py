@@ -65,6 +65,8 @@ if __name__ == "__main__":
             if pid not in black_holes:
                 continue
             black_holes[pid]["mdot"].append(mdot[i])
+            black_holes[pid]["density"].append(ds.r["density"][i])
+            black_holes[pid]["temperature"].append(ds.r["temperature"][i])
 
     for pid in black_holes:
         if black_holes[pid]["time"][-1] >= ds.current_time:
