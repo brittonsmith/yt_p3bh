@@ -33,6 +33,14 @@ def count_black_holes(halo):
     return sp["black_hole", "particle_index"].size
 add_quantity("n_black_holes", count_black_holes)
 
+def count_pop_3(halo):
+    dds = halo.halo_catalog.data_ds
+    hds = halo.halo_catalog.halos_ds
+
+    sp = halo.data_object
+    return sp["pop_3", "particle_index"].size
+add_quantity("n_pop_3", count_pop_3)
+
 def black_hole_stats(halo, bhds):
     dds = halo.halo_catalog.data_ds
     hds = halo.halo_catalog.halos_ds
@@ -88,6 +96,7 @@ if __name__ == "__main__":
         hc = HaloCatalog(data_ds=dds, halos_ds=hds, # data_source=cr,
                          output_dir=os.path.join(data_dir, dds.directory))
         hc.add_callback("sphere")
+        hc.add_quantity("n_pop_3")
         hc.add_quantity("n_black_holes")
         hc.add_quantity("BH_to_Eddington")
         if not time_series or fn == fns[-1]:

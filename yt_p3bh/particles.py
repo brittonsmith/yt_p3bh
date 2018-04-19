@@ -20,6 +20,16 @@ from yt.utilities.logger import ytLogger as mylog
 from yt_p3bh.pop_iii import \
     get_MS_lifetime
 
+def _pop3(pfilter, data):
+    return ((data['particle_type'] == 5) & (data['particle_mass'].in_units('Msun') < 1e-10)) \
+        | ((data['particle_type'] == 1) & (data['creation_time'] > 0) & \
+           (data['particle_mass'].in_units('Msun') > 1)) \
+        | ((data['particle_type'] == 5) & (data['particle_mass'].in_units('Msun') > 1e-3))
+
+add_particle_filter(
+    "pop_3", function=_pop3, filtered_type="all",
+    requires=["particle_type", "creation_time", "particle_mass"])
+
 def _pop3_black_hole(pfilter, data):
     ct = data["creation_time"]
     stars = (ct > 0)
@@ -55,7 +65,7 @@ add_particle_filter(
               "particle_type", "particle_mass"])
 
 def add_particle_filters(ds):
-    pfilters = ["black_hole"]
+    pfilters = ["pop_3", "black_hole"]
     for pfilter in pfilters:
         if not ds.add_particle_filter(pfilter):
             mylog.warn("Failed to add filter: %s." % pfilter)

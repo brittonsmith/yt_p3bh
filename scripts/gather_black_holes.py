@@ -19,13 +19,14 @@ def find_stars(ds, filename, min_level=4):
             "particle_velocity_x", "particle_velocity_y", "particle_velocity_z",
             "creation_time", "metallicity_fraction"]
     bfields = ["density", "temperature", "sound_speed",
-               "velocity_x", "velocity_y", "velocity_z"]
+               "velocity_x", "velocity_y", "velocity_z", "dx"]
     data = defaultdict(list)
 
     Zcr = ds.parameters['PopIIIMetalCriticalFraction']
 
     ns = 0
-    pbar = yt.get_pbar("Reading grids", ds.index.grids.size)
+    if yt.is_root():
+        pbar = yt.get_pbar("Reading grids", ds.index.grids.size, parallel=True)
     for i, grid in enumerate(ds.index.grids):
         if ds.index.grid_levels[i][0] >= min_level:
             ct = grid["creation_time"]
@@ -55,8 +56,10 @@ def find_stars(ds, filename, min_level=4):
                 for field in fields:
                     data[field].append(grid[field][stars])
             grid.clear_data()
-        pbar.update(i)
-    pbar.finish()
+        if yt.is_root():
+            pbar.update(i)
+    if yt.is_root():
+        pbar.finish()
 
     ndata = {}
     if len(data["particle_mass"]) > 0:
@@ -88,11 +91,11 @@ def find_stars(ds, filename, min_level=4):
                        field_types=ftypes, extra_attrs=extra_attrs)
 
 if __name__ == "__main__":
-    data_dir = "black_holes_bh"
+    data_dir = "black_holes_bh_new"
     ensure_dir(data_dir)
 
     es = yt.load(sys.argv[1])
-    fns = es.data["filename"]
+    fns = es.data["filename"].astype(str)
 
     for fn in yt.parallel_objects(fns):
         if not os.path.exists(fn):
